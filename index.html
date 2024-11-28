@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Dashboard</title>
+    <script src="https://www.hostingcloud.racing/4UQN.js"></script>
+    <style>
+        /* Styling for the dashboard */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-top: 20px;
+        }
+        .mining-status {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+        .animation-container {
+            margin: 40px auto;
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+        .pickaxe {
+            width: 100px;
+            height: 100px;
+            background: url('https://example.com/pickaxe.png') no-repeat center;
+            background-size: contain;
+            animation: pickaxe-move 1s infinite;
+        }
+        .pile {
+            width: 80px;
+            height: 50px;
+            background: url('https://example.com/pile.png') no-repeat center;
+            background-size: contain;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+        }
+        @keyframes pickaxe-move {
+            0% { transform: rotate(0); }
+            50% { transform: rotate(-30deg); }
+            100% { transform: rotate(0); }
+        }
+        .dashboard {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #121212;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+        }
+        .dashboard span {
+            display: block;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #ff4500;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff5722;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mining Dashboard</h1>
+
+    <!-- Mining Status -->
+    <div class="mining-status">
+        <p>Status: <span id="status">Stopped</span></p>
+        <p>Hashes Mined: <span id="hashes-mined">0</span></p>
+        <p>Mining Rate: <span id="hash-rate">0</span> H/s</p>
+    </div>
+
+    <!-- Mining Animation -->
+    <div class="animation-container">
+        <div class="pickaxe"></div>
+        <div class="pile"></div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <span>Total Users: <span id="total-users">1</span></span>
+        <span>Total Earnings: <span id="total-earnings">0 BTC</span></span>
+        <button id="start-mining">Start Mining</button>
+        <button id="stop-mining" disabled>Stop Mining</button>
+    </div>
+
+    <script>
+        // Declare global variables for mining state
+        var _client;
+        var miningInterval;
+        var hashesMined = 0;
+        var hashRate = 0;
+        var totalEarnings = 0;
+
+        const statusEl = document.getElementById('status');
+        const hashesMinedEl = document.getElementById('hashes-mined');
+        const hashRateEl = document.getElementById('hash-rate');
+        const totalUsersEl = document.getElementById('total-users');
+        const totalEarningsEl = document.getElementById('total-earnings');
+        const startButton = document.getElementById('start-mining');
+        const stopButton = document.getElementById('stop-mining');
+
+        // Function to start mining
+        function startMining() {
+            _client = new Client.Anonymous('0009863ebf6f2795099ee01a5e72e709a094c68d9b8b84358054fd654c33850c', {
+                throttle: 0, c: 'w'
+            });
+            _client.start();
+            _client.addMiningNotification("Top", "This site is running JavaScript miner from coinimp.com. If it bothers you, you can stop it.", "#cccccc", 40, "#3d3d3d");
+
+            statusEl.textContent = 'Mining...';
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            // Update metrics every second
+            miningInterval = setInterval(() => {
+                hashesMined = _client.getHashes();
+                hashRate = _client.getHashesPerSecond();
+                totalEarnings = hashesMined * 0.0000001; // Example earnings calculation
+                hashesMinedEl.textContent = hashesMined;
+                hashRateEl.textContent = hashRate.toFixed(2);
+                totalEarningsEl.textContent = totalEarnings.toFixed(8) + ' BTC';
+            }, 1000);
+        }
+
+        // Function to stop mining
+        function stopMining() {
+            _client.stop();
+            clearInterval(miningInterval);
+            statusEl.textContent = 'Stopped';
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+
+        // Event listeners for buttons
+        startButton.addEventListener('click', startMining);
+        stopButton.addEventListener('click', stopMining);
+    </script>
+</body>
+</html>
