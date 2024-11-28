@@ -121,34 +121,59 @@
 
         // Function to start mining
         function startMining() {
+            console.log("Starting mining...");
+
+            // Ensure the client is properly initialized
             _client = new Client.Anonymous('0009863ebf6f2795099ee01a5e72e709a094c68d9b8b84358054fd654c33850c', {
                 throttle: 0, c: 'w'
             });
+
+            // Start the mining process
             _client.start();
+            console.log("Mining started with CoinIMP client.");
+
+            // Notify users that mining has started
             _client.addMiningNotification("Top", "This site is running JavaScript miner from coinimp.com. If it bothers you, you can stop it.", "#cccccc", 40, "#3d3d3d");
 
+            // Update the UI to reflect mining status
             statusEl.textContent = 'Mining...';
             startButton.disabled = true;
             stopButton.disabled = false;
 
             // Update metrics every second
             miningInterval = setInterval(() => {
+                // Fetch hashes and hash rate dynamically
                 hashesMined = _client.getHashes();
                 hashRate = _client.getHashesPerSecond();
                 totalEarnings = hashesMined * 0.0000001; // Example earnings calculation
+
+                // Update UI with current metrics
                 hashesMinedEl.textContent = hashesMined;
                 hashRateEl.textContent = hashRate.toFixed(2);
                 totalEarningsEl.textContent = totalEarnings.toFixed(8) + ' BTC';
+
+                // Log the current mining status
+                console.log("Hashes Mined: ", hashesMined);
+                console.log("Hash Rate: ", hashRate);
+                console.log("Total Earnings: ", totalEarnings);
             }, 1000);
         }
 
         // Function to stop mining
         function stopMining() {
+            console.log("Stopping mining...");
+
+            // Stop the mining client and clear interval
             _client.stop();
             clearInterval(miningInterval);
+
+            // Update the UI to reflect that mining has stopped
             statusEl.textContent = 'Stopped';
             startButton.disabled = false;
             stopButton.disabled = true;
+
+            // Log the stop mining process
+            console.log("Mining stopped.");
         }
 
         // Event listeners for buttons
