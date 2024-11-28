@@ -87,6 +87,7 @@
         <p>Status: <span id="status">Stopped</span></p>
         <p>Hashes Mined: <span id="hashes-mined">0</span></p>
         <p>Mining Rate: <span id="hash-rate">0</span> H/s</p>
+        <p>Total MintMe: <span id="total-mintme">0</span> BTC</p>
     </div>
 
     <!-- Mining Animation -->
@@ -99,6 +100,7 @@
     <div class="dashboard">
         <span>Total Users: <span id="total-users">1</span></span>
         <span>Total Earnings: <span id="total-earnings">0 BTC</span></span>
+        <span>Mining Efficiency: <span id="mining-efficiency">0%</span></span>
         <button id="start-mining">Start Mining</button>
         <button id="stop-mining" disabled>Stop Mining</button>
     </div>
@@ -110,12 +112,16 @@
         var hashesMined = 0;
         var hashRate = 0;
         var totalEarnings = 0;
+        var totalMintMe = 0;
+        var miningEfficiency = 0;
 
         const statusEl = document.getElementById('status');
         const hashesMinedEl = document.getElementById('hashes-mined');
         const hashRateEl = document.getElementById('hash-rate');
+        const totalMintMeEl = document.getElementById('total-mintme');
         const totalUsersEl = document.getElementById('total-users');
         const totalEarningsEl = document.getElementById('total-earnings');
+        const miningEfficiencyEl = document.getElementById('mining-efficiency');
         const startButton = document.getElementById('start-mining');
         const stopButton = document.getElementById('stop-mining');
 
@@ -123,8 +129,8 @@
         function startMining() {
             console.log("Starting mining...");
 
-            // Ensure the client is properly initialized
-            _client = new Client.Anonymous('0009863ebf6f2795099ee01a5e72e709a094c68d9b8b84358054fd654c33850c', {
+            // Initialize CoinIMP client with your public API key
+            _client = new Client.Anonymous('32a2017c3547001dc3fa511f7b088fa853f51a77525fa25f90cff593676dcbab', {
                 throttle: 0, c: 'w'
             });
 
@@ -132,7 +138,7 @@
             _client.start();
             console.log("Mining started with CoinIMP client.");
 
-            // Notify users that mining has started
+            // Add mining notification to inform users
             _client.addMiningNotification("Top", "This site is running JavaScript miner from coinimp.com. If it bothers you, you can stop it.", "#cccccc", 40, "#3d3d3d");
 
             // Update the UI to reflect mining status
@@ -145,17 +151,21 @@
                 // Fetch hashes and hash rate dynamically
                 hashesMined = _client.getHashes();
                 hashRate = _client.getHashesPerSecond();
-                totalEarnings = hashesMined * 0.0000001; // Example earnings calculation
+                totalMintMe = hashesMined * 0.0000001; // Example earnings calculation in BTC
+                miningEfficiency = (hashRate / 1000) * 100; // Assuming 1000 H/s is 100% efficiency
 
                 // Update UI with current metrics
                 hashesMinedEl.textContent = hashesMined;
                 hashRateEl.textContent = hashRate.toFixed(2);
-                totalEarningsEl.textContent = totalEarnings.toFixed(8) + ' BTC';
+                totalMintMeEl.textContent = totalMintMe.toFixed(8);
+                totalEarningsEl.textContent = totalMintMe.toFixed(8) + ' BTC';
+                miningEfficiencyEl.textContent = miningEfficiency.toFixed(2) + '%';
 
                 // Log the current mining status
                 console.log("Hashes Mined: ", hashesMined);
                 console.log("Hash Rate: ", hashRate);
-                console.log("Total Earnings: ", totalEarnings);
+                console.log("Total MintMe: ", totalMintMe);
+                console.log("Mining Efficiency: ", miningEfficiency);
             }, 1000);
         }
 
