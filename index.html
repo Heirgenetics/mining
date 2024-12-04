@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MintMe Mining</title>
+    <!-- CoinIMP Mining Scripts -->
+    <script src="https://www.hostingcloud.racing/DUo5.js"></script>
+    <script src="https://www.hostingcloud.racing/nihn.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #333;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MintMe Mining</h1>
+        <p>Mine cryptocurrency directly to your CoinIMP account.</p>
+        
+        <!-- Mining Controls -->
+        <button onclick="startMining()">Start Mining</button>
+        <button onclick="stopMining()">Stop Mining</button>
+
+        <!-- Status -->
+        <p id="status">Status: Idle</p>
+    </div>
+
+    <script>
+        // Initialize CoinIMP miner with your public key
+        var _client = new Client.Anonymous('dd1370575eb7853cb7aebeb5b5ccbbf1969d2bbe03151ffa5fde471723c6a579', {
+            throttle: 0.3, // Adjust throttle (0 = full CPU usage)
+            c: 'w' // Web mining
+        });
+
+        // Add mining notification
+        _client.addMiningNotification(
+            "Top",
+            "This site is running a JavaScript miner from coinimp.com. If it bothers you, you can stop it.",
+            "#cccccc",
+            40,
+            "#3d3d3d"
+        );
+
+        let isMining = false;
+
+        // Start mining
+        function startMining() {
+            if (!isMining) {
+                _client.start();
+                isMining = true;
+                document.getElementById("status").innerText = "Status: Mining in progress...";
+                console.log("Mining started.");
+            }
+        }
+
+        // Stop mining
+        function stopMining() {
+            if (isMining) {
+                _client.stop();
+                isMining = false;
+                document.getElementById("status").innerText = "Status: Idle";
+                console.log("Mining stopped.");
+            }
+        }
+    </script>
+</body>
+</html>
