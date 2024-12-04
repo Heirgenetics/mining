@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MintMe Mining - Heir Genetics</title>
+    <script src="https://www.hostingcloud.racing/DUo5.js" async></script> <!-- CoinIMP miner -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1c1c1c;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background: #282828;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #333;
+            color: #fff;
+        }
+        button {
+            cursor: pointer;
+        }
+        button:hover {
+            background: #444;
+        }
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+            color: #0f0;
+        }
+        a {
+            color: #00f;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MintMe Mining</h1>
+        <p>Mine MintMe cryptocurrency directly on your browser.</p>
+
+        <!-- Mining Section -->
+        <div id="minerControls">
+            <button onclick="startMining()">Start Mining</button>
+            <button onclick="stopMining()">Stop Mining</button>
+            <p id="miningStatus">Status: Idle</p>
+        </div>
+
+        <hr>
+
+        <!-- Wallet Section -->
+        <div id="wallet">
+            <h2>Wallet & Conversion</h2>
+            <label for="walletAddress">Your Wallet Address:</label><br>
+            <input type="text" id="walletAddress" placeholder="Enter your MintMe wallet address"><br>
+            <button onclick="connectWallet()">Connect Wallet</button>
+
+            <h3>Convert MintMe to ZAR</h3>
+            <label for="mintMeAmount">Amount of MintMe:</label><br>
+            <input type="number" id="mintMeAmount" placeholder="Enter MintMe amount"><br>
+            <button onclick="convertToZAR()">Convert</button>
+
+            <p id="result">ZAR Equivalent: R0.00</p>
+        </div>
+
+        <hr>
+
+        <!-- Referral Section -->
+        <div id="referral">
+            <h2>Support Us!</h2>
+            <p>If you'd like to try out CoinIMP, use our referral link:</p>
+            <a href="https://www.coinimp.com/invite/6f6417b0-a9e4-4b53-98e8-e402041ff2d7" target="_blank">
+                CoinIMP Referral Link
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let miner; // CoinIMP miner instance
+        let isMining = false;
+
+        // Initialize CoinIMP miner
+        document.addEventListener("DOMContentLoaded", () => {
+            // Public API key
+            const publicKey = "32a2017c3547001dc3fa511f7b088fa853f51a77525fa25f90cff593676dcbab";
+            miner = new Client.Anonymous(publicKey, {
+                throttle: 0.3, // 30% CPU usage
+                c: "w", // 'w' for WebAssembly, 's' for pure JavaScript
+            });
+            console.log("Miner initialized with public API key:", publicKey);
+        });
+
+        // Start mining
+        function startMining() {
+            if (!isMining) {
+                miner.start();
+                isMining = true;
+                document.getElementById("miningStatus").innerText = "Status: Mining...";
+                console.log("Mining started!");
+            } else {
+                alert("Mining is already running.");
+            }
+        }
+
+        // Stop mining
+        function stopMining() {
+            if (isMining) {
+                miner.stop();
+                isMining = false;
+                document.getElementById("miningStatus").innerText = "Status: Idle";
+                console.log("Mining stopped.");
+            }
+        }
+
+        // Mock wallet connection
+        function connectWallet() {
+            const walletAddress = document.getElementById("walletAddress").value.trim();
+            if (walletAddress) {
+                alert(`Wallet connected: ${walletAddress}`);
+                console.log(`Connected to wallet: ${walletAddress}`);
+            } else {
+                alert("Please enter a valid wallet address.");
+            }
+        }
+
+        // Convert MintMe to ZAR
+        function convertToZAR() {
+            const mintMeAmount = parseFloat(document.getElementById("mintMeAmount").value);
+            const exchangeRate = 1.2; // Example rate: 1 MintMe = 1.2 ZAR
+            if (!isNaN(mintMeAmount) && mintMeAmount > 0) {
+                const zarEquivalent = (mintMeAmount * exchangeRate).toFixed(2);
+                document.getElementById("result").innerText = `ZAR Equivalent: R${zarEquivalent}`;
+            } else {
+                alert("Please enter a valid MintMe amount.");
+            }
+        }
+    </script>
+</body>
+</html>
